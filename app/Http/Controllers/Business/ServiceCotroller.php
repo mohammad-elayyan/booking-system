@@ -21,32 +21,43 @@ class ServiceCotroller extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+
             'name' => 'required|string',
             'price' => 'required|string',
+
         ]);
 
         if ($validator->fails())
             return response()->json($validator->errors()->toJson());
 
         $business = Business::where('user_id', Auth::id())->firstOrFail();
-        $business->business_id = $business->id;
-        Service::create(array_merge($validator->validated()));
+
+        $service = new Service();
+        $service->business_id = $business->id;
+        $service->name = $request->name;
+        $service->price = $request->price;
+        $service->description = $request->description;
+        $service->save();
+
         return response()->json('Service is added');
     }
 
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'business_id' => 'required|string',
+
             'name' => 'required|string',
-            'description' => 'string',
+
             'price' => 'required|string',
         ]);
         if ($validator->fails())
             return response()->json($validator->errors()->toJson());
 
         $service = Service::findOrFail($id);
-        $service->update($validator->validated());
+        $service->name = $request->name;
+        $service->price = $request->price;
+        $service->description = $request->description;
+        $service->save();
         return response()->json('Service is updated');
     }
 

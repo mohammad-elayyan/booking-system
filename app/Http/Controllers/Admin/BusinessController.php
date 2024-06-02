@@ -14,45 +14,44 @@ class BusinessController extends Controller
         $business = Business::paginate(10);
         return response()->json($business);
     }
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'user_id' => 'required|string',
-            'opening_hours' => 'required|string',
-            'status' => 'required|string',
+            'name' => 'required',
+            'user_id' => 'required',
+            'opening_hours' => 'required',
+            'status' => 'required',
         ]);
 
         if ($validator->fails())
             return response()->json($validator->errors()->toJson());
 
         Business::create(array_merge($validator->validated()));
-        return response()->json('Business is added');
+        return response()->json('business added');
     }
 
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'user_id' => 'required|string',
-            'opening_hours' => 'required|string',
-            'status' => 'required|string',
+        $validator = Validator::make($request->all, [
+            'name' => 'required',
+            'user_id' => 'required',
+            'opening_hours' => 'required',
+            'status' => 'required',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->errors()->toJson());
+            return response()->json([$validator->errors()->toJson()]);
 
         $business = Business::findOrFail($id);
-        $business->update(array_merge($validator->validated()));
+        $business->update($validator->validated());
 
-        return response()->json('Business is updated');
+        return response()->json('business updated');
     }
 
     public function destroy($id)
     {
         $business = Business::findOrFail($id);
         $business->delete();
-        return response()->json('Business is deleted');
+        return response()->json('business deleted');
     }
 }
