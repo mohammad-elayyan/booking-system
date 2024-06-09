@@ -16,9 +16,9 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->role == 'admin')
+        if (Auth::user() && Auth::user()->role == 'admin')
             return $next($request);
         else
-            return Response()->json('You are not authorized');
+            abort(401);
     }
 }
